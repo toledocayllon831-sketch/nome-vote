@@ -114,34 +114,40 @@ const resultsList =
 // NOMES
 // =====================================================
 
-const names = [
+const maleNames = [
     "Ezequiel",
     "Elias",
     "Eliel",
-    "Azaf",
+    "Azaf"
+];
+
+const femaleNames = [
     "Maya",
     "Malu",
     "Mavie",
     "Laura"
 ];
 
+const names = [
+    ...maleNames,
+    ...femaleNames
+];
+
+
+// =====================================================
+// CONTADORES
+// =====================================================
 
 const voteCounts = {
 
     Ezequiel: 0,
-
     Elias: 0,
-
     Eliel: 0,
-
     Azaf: 0,
 
     Maya: 0,
-
     Malu: 0,
-
     Mavie: 0,
-
     Laura: 0
 };
 
@@ -382,6 +388,8 @@ async function loadVotes() {
             );
 
 
+        // ZERA OS CONTADORES
+
         names.forEach(
             (name) => {
 
@@ -390,31 +398,67 @@ async function loadVotes() {
         );
 
 
+        // =================================================
+        // LÊ CADA PARTICIPANTE
+        // =================================================
+
         snapshot.forEach(
             (documentSnapshot) => {
 
                 const vote =
                     documentSnapshot.data();
 
-                const name =
-                    vote.name;
 
+                console.log(
+                    "Voto encontrado:",
+                    vote
+                );
+
+
+                // VOTO MASCULINO
 
                 if (
-                    Object.prototype.hasOwnProperty.call(
-                        voteCounts,
-                        name
+                    typeof vote.nomeMasculino === "string"
+                    &&
+                    maleNames.includes(
+                        vote.nomeMasculino
                     )
                 ) {
 
-                    voteCounts[name]++;
+                    voteCounts[
+                        vote.nomeMasculino
+                    ]++;
+                }
+
+
+                // VOTO FEMININO
+
+                if (
+                    typeof vote.nomeFeminino === "string"
+                    &&
+                    femaleNames.includes(
+                        vote.nomeFeminino
+                    )
+                ) {
+
+                    voteCounts[
+                        vote.nomeFeminino
+                    ]++;
                 }
             }
         );
 
 
+        // =================================================
+        // TOTAL DE PARTICIPANTES
+        // =================================================
+
+        totalVotesElement.textContent =
+            snapshot.size;
+
+
         console.log(
-            "Total de votos:",
+            "Total de participantes:",
             snapshot.size
         );
 
@@ -444,45 +488,124 @@ async function loadVotes() {
 
 
 // =====================================================
-// RENDERIZAR
+// RENDERIZAR RESULTADOS
 // =====================================================
 
 function renderResults() {
 
+    resultsList.innerHTML = "";
+
+
+    // =================================================
+    // MENINOS
+    // =================================================
+
+    const maleTitle =
+        document.createElement("div");
+
+    maleTitle.className =
+        "gender-title male-title";
+
+    maleTitle.innerHTML =
+        `
+            <span>⚽</span>
+            MENINOS
+        `;
+
+    resultsList.appendChild(
+        maleTitle
+    );
+
+
+    renderGenderResults(
+        maleNames,
+        resultsList
+    );
+
+
+    // =================================================
+    // MENINAS
+    // =================================================
+
+    const femaleTitle =
+        document.createElement("div");
+
+    femaleTitle.className =
+        "gender-title female-title";
+
+    femaleTitle.innerHTML =
+        `
+            <span>🎀</span>
+            MENINAS
+        `;
+
+    resultsList.appendChild(
+        femaleTitle
+    );
+
+
+    renderGenderResults(
+        femaleNames,
+        resultsList
+    );
+
+
+    // =================================================
+    // MINI CARDS
+    // =================================================
+
+    names.forEach(
+        (name) => {
+
+            const element =
+                document.getElementById(
+                    `count-${name}`
+                );
+
+
+            if (element) {
+
+                element.textContent =
+                    voteCounts[name];
+            }
+        }
+    );
+}
+
+
+// =====================================================
+// RESULTADOS POR GÊNERO
+// =====================================================
+
+function renderGenderResults(
+    genderNames,
+    container
+) {
+
     const sortedResults =
-        Object.entries(
-            voteCounts
-        ).sort(
-            (a, b) => b[1] - a[1]
+        [...genderNames].sort(
+            (a, b) =>
+                voteCounts[b] -
+                voteCounts[a]
         );
-
-
-    const total =
-        sortedResults.reduce(
-            (sum, [, votes]) =>
-                sum + votes,
-            0
-        );
-
-
-    totalVotesElement.textContent =
-        total;
 
 
     const maxVotes =
         Math.max(
             ...sortedResults.map(
-                ([, votes]) => votes
+                (name) =>
+                    voteCounts[name]
             ),
             1
         );
 
 
-    resultsList.innerHTML = "";
-
-
     sortedResults.forEach(
-        ([name, votes], index) => {
+        (name, index) => {
+
+            const votes =
+                voteCounts[name];
+
 
             const position =
                 index + 1;
@@ -528,30 +651,13 @@ function renderResults() {
                 <div class="result-count">
                     ${votes}
                 </div>
+
             `;
 
 
-            resultsList.appendChild(
+            container.appendChild(
                 item
             );
-        }
-    );
-
-
-    names.forEach(
-        (name) => {
-
-            const element =
-                document.getElementById(
-                    `count-${name}`
-                );
-
-
-            if (element) {
-
-                element.textContent =
-                    voteCounts[name];
-            }
         }
     );
 }
