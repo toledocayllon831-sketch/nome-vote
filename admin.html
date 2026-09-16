@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#05070d"
+    >
+
+    <title>Baby Vote | Administração</title>
+
+    <link
+        rel="stylesheet"
+        href="admin.css"
+    >
+</head>
+
+<body>
+
+    <div class="background">
+        <div class="orb orb-green"></div>
+        <div class="orb orb-purple"></div>
+        <div class="stars"></div>
+    </div>
+
+
+    <!-- ==================================================
+         LOGIN
+    ================================================== -->
+
+    <main
+        id="loginScreen"
+        class="screen login-screen"
+    >
+
+        <section class="login-card">
+
+            <div class="admin-icon">
+                🔐
+            </div>
+
+            <div class="admin-badge">
+                ÁREA RESTRITA
+            </div>
+
+            <h1>
+                Baby <span>Vote</span>
+            </h1>
+
+            <p class="login-description">
+                Entre com a conta administrativa
+                para visualizar os resultados.
+            </p>
+
+
+            <form id="loginForm">
+
+                <div class="input-group">
+
+                    <label for="email">
+                        E-mail
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="seu@email.com"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="password">
+                        Senha
+                    </label>
+
+                    <div class="password-wrapper">
+
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Digite sua senha"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            id="togglePassword"
+                            class="password-toggle"
+                            aria-label="Mostrar senha"
+                        >
+                            👁
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    id="loginButton"
+                    class="login-button"
+                >
+                    <span id="loginButtonText">
+                        ENTRAR
+                    </span>
+
+                    <span
+                        id="loginSpinner"
+                        class="button-spinner hidden"
+                    ></span>
+                </button>
+
+
+                <p
+                    id="loginError"
+                    class="login-error"
+                ></p>
+
+            </form>
+
+        </section>
+
+    </main>
+
+
+    <!-- ==================================================
+         PAINEL
+    ================================================== -->
+
+    <main
+        id="adminScreen"
+        class="screen admin-screen hidden"
+    >
+
+        <div class="admin-container">
+
+
+            <!-- HEADER -->
+
+            <header class="admin-header">
+
+                <div class="header-top">
+
+                    <div class="admin-badge">
+                        🔐 ADMIN
+                    </div>
+
+                    <button
+                        id="logoutButton"
+                        class="logout-button"
+                    >
+                        SAIR
+                    </button>
+
+                </div>
+
+
+                <h1>
+                    Baby <span>Vote</span>
+                </h1>
+
+                <p>
+                    Painel de resultados
+                </p>
+
+            </header>
+
+
+            <!-- TOTAL -->
+
+            <section class="total-card">
+
+                <div class="total-icon">
+                    👶
+                </div>
+
+                <div>
+
+                    <span class="label">
+                        TOTAL DE VOTOS
+                    </span>
+
+                    <strong id="totalVotes">
+                        0
+                    </strong>
+
+                </div>
+
+            </section>
+
+
+            <!-- RESULTADOS -->
+
+            <section class="results-card">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            RESULTADOS
+                        </span>
+
+                        <h2>
+                            Ranking dos nomes
+                        </h2>
+
+                    </div>
+
+                    <div class="live-status">
+
+                        <span></span>
+
+                        AO VIVO
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="resultsList"
+                    class="results-list"
+                >
+
+                    <div class="loading">
+
+                        <div class="spinner"></div>
+
+                        <p>
+                            Carregando resultados...
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- MENINOS -->
+
+            <section class="names-section">
+
+                <div class="gender-title male-title">
+                    ⚽ MENINOS
+                </div>
+
+                <div class="mini-results">
+
+                    <div class="mini-card">
+                        <span>Ezequiel</span>
+                        <strong id="count-Ezequiel">0</strong>
+                    </div>
+
+                    <div class="mini-card">
+                        <span>Elias</span>
+                        <strong id="count-Elias">0</strong>
+                    </div>
+
+                    <div class="mini-card">
+                        <span>Eliel</span>
+                        <strong id="count-Eliel">0</strong>
+                    </div>
+
+                    <div class="mini-card">
+                        <span>Azaf</span>
+                        <strong id="count-Azaf">0</strong>
+                    </div>
+
+                </div>
+
+
+                <!-- MENINAS -->
+
+                <div class="gender-title female-title">
+                    🎀 MENINAS
+                </div>
+
+                <div class="mini-results">
+
+                    <div class="mini-card">
+                        <span>Maya</span>
+                        <strong id="count-Maya">0</strong>
+                    </div>
+
+                    <div class="mini-card">
+                        <span>Malu</span>
+                        <strong id="count-Malu">0</strong>
+                    </div>
+
+                    <div class="mini-card">
+                        <span>Mavie</span>
+                        <strong id="count-Mavie">0</strong>
+                    </div>
+
+                    <div class="mini-card">
+                        <span>Laura</span>
+                        <strong id="count-Laura">0</strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <footer class="admin-footer">
+
+                <span>
+                    Baby Vote
+                </span>
+
+                <span>•</span>
+
+                <span>
+                    Painel administrativo
+                </span>
+
+            </footer>
+
+        </div>
+
+    </main>
+
+
+    <script
+        type="module"
+        src="admin.js"
+    ></script>
+
+</body>
+
+</html>

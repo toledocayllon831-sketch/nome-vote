@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#090b12">
+    <meta name="description" content="Vote no nome do bebê">
+
+    <title>Baby Vote | Escolha o nome</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Fundo decorativo -->
+    <div class="background">
+        <div class="orb orb-green"></div>
+        <div class="orb orb-purple"></div>
+        <div class="stars"></div>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <main class="container">
+
+        <section class="vote-card">
+
+            <div class="header">
+
+                <div class="baby-icon">
+                    👶
+                </div>
+
+                <span class="eyebrow">
+                    BABY VOTE
+                </span>
+
+                <h1>
+                    Escolha o nome
+                </h1>
+
+                <p>
+                    Vote no seu nome favorito para o bebê.
+                </p>
+
+            </div>
+
+
+            <!-- Nomes masculinos -->
+            <section class="names-section">
+
+                <div class="section-title male-title">
+                    <span>💚</span>
+                    <h2>Nomes masculinos</h2>
+                </div>
+
+                <div class="names-grid">
+
+                    <button
+                        class="name-button male"
+                        data-name="Ezequiel"
+                        data-gender="male">
+                        <span>Ezequiel</span>
+                    </button>
+
+                    <button
+                        class="name-button male"
+                        data-name="Elias"
+                        data-gender="male">
+                        <span>Elias</span>
+                    </button>
+
+                    <button
+                        class="name-button male"
+                        data-name="Eliel"
+                        data-gender="male">
+                        <span>Eliel</span>
+                    </button>
+
+                    <button
+                        class="name-button male"
+                        data-name="Azaf"
+                        data-gender="male">
+                        <span>Azaf</span>
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- Nomes femininos -->
+            <section class="names-section">
+
+                <div class="section-title female-title">
+                    <span>💜</span>
+                    <h2>Nomes femininos</h2>
+                </div>
+
+                <div class="names-grid">
+
+                    <button
+                        class="name-button female"
+                        data-name="Maya"
+                        data-gender="female">
+                        <span>Maya</span>
+                    </button>
+
+                    <button
+                        class="name-button female"
+                        data-name="Malu"
+                        data-gender="female">
+                        <span>Malu</span>
+                    </button>
+
+                    <button
+                        class="name-button female"
+                        data-name="Mavie"
+                        data-gender="female">
+                        <span>Mavie</span>
+                    </button>
+
+                    <button
+                        class="name-button female"
+                        data-name="Laura"
+                        data-gender="female">
+                        <span>Laura</span>
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <footer class="footer">
+                <span>Seu voto será registrado uma única vez.</span>
+            </footer>
+
+        </section>
+
+    </main>
+
+
+    <!-- Modal de confirmação -->
+    <div
+        id="confirmationModal"
+        class="modal hidden"
+        aria-hidden="true">
+
+        <div class="modal-backdrop"></div>
+
+        <div class="modal-content">
+
+            <div
+                id="modalIcon"
+                class="modal-icon">
+                ❤️
+            </div>
+
+            <span class="modal-label">
+                VOCÊ ESCOLHEU
+            </span>
+
+            <h2 id="selectedName">
+                Nome
+            </h2>
+
+            <p>
+                Tem certeza que deseja votar neste nome?
+            </p>
+
+            <div class="modal-actions">
+
+                <button
+                    id="cancelButton"
+                    class="modal-button cancel"
+                    type="button">
+                    Cancelar
+                </button>
+
+                <button
+                    id="confirmButton"
+                    class="modal-button confirm"
+                    type="button">
+                    Confirmar voto
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Tela de sucesso -->
+    <div
+        id="successOverlay"
+        class="success-overlay hidden"
+        aria-hidden="true">
+
+        <div
+            id="animationLayer"
+            class="animation-layer">
+        </div>
+
+        <div class="success-content">
+
+            <div class="success-icon">
+                ✓
+            </div>
+
+            <span class="success-label">
+                VOTO REGISTRADO
+            </span>
+
+            <h2>
+                Obrigado por votar! 💚
+            </h2>
+
+            <p>
+                Seu voto foi registrado com sucesso.
+            </p>
+
+            <strong id="confirmedName">
+                Nome
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- Firebase + lógica do sistema -->
+    <script type="module" src="script.js"></script>
+
+</body>
+</html>
