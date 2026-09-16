@@ -3,6 +3,7 @@
    SCRIPT.JS
    ========================================================= */
 
+
 /* =========================
    FIREBASE IMPORTS
    ========================= */
@@ -78,13 +79,11 @@ const validNames = {
   DOM ELEMENTS
   ========================= */
 
-const nameButtons = document.querySelectorAll(".name-button");
+const nameButtons =
+   document.querySelectorAll(".name-button");
 
 const confirmationModal =
    document.getElementById("confirmationModal");
-
-const selectedNameElement =
-   document.getElementById("selectedName");
 
 const modalIcon =
    document.getElementById("modalIcon");
@@ -98,11 +97,29 @@ const confirmButton =
 const successOverlay =
    document.getElementById("successOverlay");
 
-const confirmedName =
-   document.getElementById("confirmedName");
-
 const animationLayer =
    document.getElementById("animationLayer");
+
+const selectedMaleElement =
+   document.getElementById("selectedMale");
+
+const selectedFemaleElement =
+   document.getElementById("selectedFemale");
+
+const selectedMaleModal =
+   document.getElementById("selectedMaleModal");
+
+const selectedFemaleModal =
+   document.getElementById("selectedFemaleModal");
+
+const confirmedMale =
+   document.getElementById("confirmedMale");
+
+const confirmedFemale =
+   document.getElementById("confirmedFemale");
+
+const openConfirmationButton =
+   document.getElementById("openConfirmationButton");
 
 
 /* =========================
@@ -111,9 +128,9 @@ const animationLayer =
 
 let currentUser = null;
 
-let selectedName = null;
+let selectedMale = null;
 
-let selectedGender = null;
+let selectedFemale = null;
 
 let alreadyVoted = false;
 
@@ -135,7 +152,9 @@ async function initializeApplication() {
 
        await signInAnonymously(auth);
 
-       console.log("Autenticação anônima iniciada.");
+       console.log(
+           "Autenticação anônima iniciada."
+       );
 
    } catch (error) {
 
@@ -200,6 +219,7 @@ async function checkExistingVote() {
        const voteSnapshot =
            await getDoc(voteReference);
 
+
        if (voteSnapshot.exists()) {
 
            alreadyVoted = true;
@@ -212,9 +232,7 @@ async function checkExistingVote() {
                voteData
            );
 
-           disableVotingInterface(
-               voteData.name
-           );
+           disableVotingInterface();
 
        } else {
 
@@ -222,6 +240,7 @@ async function checkExistingVote() {
 
            enableVotingInterface();
        }
+
 
    } catch (error) {
 
@@ -248,7 +267,7 @@ nameButtons.forEach((button) => {
        if (alreadyVoted) {
 
            showFirebaseError(
-               "Você já registrou seu voto."
+               "Você já registrou seus votos."
            );
 
            return;
@@ -258,11 +277,13 @@ nameButtons.forEach((button) => {
            return;
        }
 
+
        const name =
            button.dataset.name;
 
        const gender =
            button.dataset.gender;
+
 
        if (!name || !gender) {
 
@@ -272,6 +293,7 @@ nameButtons.forEach((button) => {
 
            return;
        }
+
 
        if (!isValidName(name, gender)) {
 
@@ -284,14 +306,46 @@ nameButtons.forEach((button) => {
            return;
        }
 
-       selectedName = name;
 
-       selectedGender = gender;
+       /*
+        * Se for masculino, salva a escolha masculina.
+        */
 
-       openConfirmationModal(
-           name,
-           gender
-       );
+       if (gender === "male") {
+
+           selectedMale = name;
+
+           selectedMaleElement.textContent =
+               name;
+
+       }
+
+
+       /*
+        * Se for feminino, salva a escolha feminina.
+        */
+
+       if (gender === "female") {
+
+           selectedFemale = name;
+
+           selectedFemaleElement.textContent =
+               name;
+       }
+
+
+       /*
+        * Marca visualmente o botão escolhido.
+        */
+
+       updateSelectedButtons();
+
+
+       /*
+        * Atualiza o botão final.
+        */
+
+       updateConfirmationButton();
    });
 });
 
@@ -311,22 +365,147 @@ function isValidName(name, gender) {
 
 
 /* =========================
-  OPEN CONFIRMATION MODAL
+  UPDATE SELECTED BUTTONS
   ========================= */
 
-function openConfirmationModal(name, gender) {
+function updateSelectedButtons() {
 
-   selectedNameElement.textContent =
-       name;
+   nameButtons.forEach((button) => {
 
-   if (gender === "male") {
+       const name =
+           button.dataset.name;
 
-       modalIcon.textContent = "⚽";
+       const gender =
+           button.dataset.gender;
+
+
+       button.classList.remove(
+           "selected"
+       );
+
+
+       if (
+           gender === "male" &&
+           name === selectedMale
+       ) {
+
+           button.classList.add(
+               "selected"
+           );
+       }
+
+
+       if (
+           gender === "female" &&
+           name === selectedFemale
+       ) {
+
+           button.classList.add(
+               "selected"
+           );
+       }
+   });
+}
+
+
+/* =========================
+  UPDATE CONFIRMATION BUTTON
+  ========================= */
+
+function updateConfirmationButton() {
+
+   if (
+       selectedMale &&
+       selectedFemale
+   ) {
+
+       openConfirmationButton.disabled =
+           false;
+
+       openConfirmationButton.textContent =
+           "Confirmar minhas escolhas";
 
    } else {
 
-       modalIcon.textContent = "🎀";
+       openConfirmationButton.disabled =
+           true;
+
+       if (
+           selectedMale &&
+           !selectedFemale
+       ) {
+
+           openConfirmationButton.textContent =
+               "Escolha um nome feminino";
+
+       } else if (
+           !selectedMale &&
+           selectedFemale
+       ) {
+
+           openConfirmationButton.textContent =
+               "Escolha um nome masculino";
+
+       } else {
+
+           openConfirmationButton.textContent =
+               "Escolha os dois nomes";
+       }
    }
+}
+
+
+/* =========================
+  OPEN CONFIRMATION
+  ========================= */
+
+openConfirmationButton.addEventListener(
+   "click",
+   () => {
+
+       if (alreadyVoted) {
+
+           showFirebaseError(
+               "Você já registrou seus votos."
+           );
+
+           return;
+       }
+
+
+       if (
+           !selectedMale ||
+           !selectedFemale
+       ) {
+
+           showFirebaseError(
+               "Escolha um nome masculino e um nome feminino."
+           );
+
+           return;
+       }
+
+
+       openConfirmationModal();
+   }
+);
+
+
+/* =========================
+  OPEN CONFIRMATION MODAL
+  ========================= */
+
+function openConfirmationModal() {
+
+   selectedMaleModal.textContent =
+       selectedMale;
+
+   selectedFemaleModal.textContent =
+       selectedFemale;
+
+   modalIcon.textContent =
+       "👶";
+
 
    confirmationModal.classList.remove(
        "hidden"
@@ -337,7 +516,8 @@ function openConfirmationModal(name, gender) {
        "false"
    );
 
-   document.body.style.overflow = "hidden";
+   document.body.style.overflow =
+       "hidden";
 }
 
 
@@ -356,11 +536,8 @@ function closeConfirmationModal() {
        "true"
    );
 
-   document.body.style.overflow = "";
-
-   selectedName = null;
-
-   selectedGender = null;
+   document.body.style.overflow =
+       "";
 }
 
 
@@ -412,6 +589,7 @@ document.addEventListener(
            return;
        }
 
+
        if (
            confirmationModal.classList.contains(
                "hidden"
@@ -420,9 +598,11 @@ document.addEventListener(
            return;
        }
 
+
        if (isSavingVote) {
            return;
        }
+
 
        closeConfirmationModal();
    }
@@ -430,38 +610,40 @@ document.addEventListener(
 
 
 /* =========================
-  CONFIRM VOTE
+  CONFIRM VOTES
   ========================= */
 
 confirmButton.addEventListener(
    "click",
    async () => {
 
-       await submitVote();
+       await submitVotes();
    }
 );
 
 
 /* =========================
-  SUBMIT VOTE
+  SUBMIT VOTES
   ========================= */
 
-async function submitVote() {
+async function submitVotes() {
 
    if (isSavingVote) {
        return;
    }
 
+
    if (alreadyVoted) {
 
        showFirebaseError(
-           "Você já registrou seu voto."
+           "Você já registrou seus votos."
        );
 
        closeConfirmationModal();
 
        return;
    }
+
 
    if (!currentUser) {
 
@@ -472,24 +654,44 @@ async function submitVote() {
        return;
    }
 
-   if (!selectedName || !selectedGender) {
+
+   if (
+       !selectedMale ||
+       !selectedFemale
+   ) {
 
        showFirebaseError(
-           "Selecione um nome novamente."
+           "Escolha um nome masculino e um nome feminino."
        );
 
        return;
    }
 
+
    if (
        !isValidName(
-           selectedName,
-           selectedGender
+           selectedMale,
+           "male"
        )
    ) {
 
        showFirebaseError(
-           "Nome de votação inválido."
+           "Nome masculino inválido."
+       );
+
+       return;
+   }
+
+
+   if (
+       !isValidName(
+           selectedFemale,
+           "female"
+       )
+   ) {
+
+       showFirebaseError(
+           "Nome feminino inválido."
        );
 
        return;
@@ -503,7 +705,9 @@ async function submitVote() {
 
    try {
 
-       const uid = currentUser.uid;
+       const uid =
+           currentUser.uid;
+
 
        const voteReference =
            doc(
@@ -514,30 +718,25 @@ async function submitVote() {
 
 
        /*
-        * Verificação adicional antes da gravação.
-        *
-        * A proteção definitiva também ficará
-        * nas Firestore Security Rules.
+        * Verificação adicional.
         */
 
        const existingVote =
-           await getDoc(voteReference);
+           await getDoc(
+               voteReference
+           );
+
 
        if (existingVote.exists()) {
 
            alreadyVoted = true;
 
-           const existingData =
-               existingVote.data();
-
            closeConfirmationModal();
 
-           disableVotingInterface(
-               existingData.name
-           );
+           disableVotingInterface();
 
            showFirebaseError(
-               "Este usuário já possui um voto registrado."
+               "Este usuário já possui votos registrados."
            );
 
            return;
@@ -545,57 +744,56 @@ async function submitVote() {
 
 
        /*
-        * Grava o voto.
-        *
-        * O UID fica como ID do documento.
-        * createdAt usa o timestamp do servidor.
+        * GRAVA OS DOIS VOTOS.
         */
 
        await setDoc(
            voteReference,
            {
-               name: selectedName,
-               gender: selectedGender,
+               nomeMasculino: selectedMale,
+               nomeFeminino: selectedFemale,
                createdAt: serverTimestamp()
            }
        );
 
 
        /* =========================
-          VOTO SALVO
+          VOTOS SALVOS
           ========================= */
 
        alreadyVoted = true;
 
-       const votedName = selectedName;
 
-       const votedGender = selectedGender;
+       const votedMale =
+           selectedMale;
+
+       const votedFemale =
+           selectedFemale;
 
 
        closeConfirmationModal();
 
 
-       disableVotingInterface(
-           votedName
-       );
+       disableVotingInterface();
 
 
        showSuccessScreen(
-           votedName,
-           votedGender
+           votedMale,
+           votedFemale
        );
 
 
        console.log(
-           "Voto registrado com sucesso:",
-           votedName
+           "Votos registrados:",
+           votedMale,
+           votedFemale
        );
 
 
    } catch (error) {
 
        console.error(
-           "Erro ao registrar voto:",
+           "Erro ao registrar votos:",
            error
        );
 
@@ -614,11 +812,14 @@ async function submitVote() {
   CONFIRM BUTTON LOADING
   ========================= */
 
-function setConfirmButtonLoading(isLoading) {
+function setConfirmButtonLoading(
+   isLoading
+) {
 
    if (isLoading) {
 
-       confirmButton.disabled = true;
+       confirmButton.disabled =
+           true;
 
        confirmButton.dataset.originalText =
            confirmButton.textContent;
@@ -628,7 +829,8 @@ function setConfirmButtonLoading(isLoading) {
 
    } else {
 
-       confirmButton.disabled = false;
+       confirmButton.disabled =
+           false;
 
        if (
            confirmButton.dataset.originalText
@@ -645,19 +847,30 @@ function setConfirmButtonLoading(isLoading) {
   DISABLE VOTING
   ========================= */
 
-function disableVotingInterface(votedName) {
+function disableVotingInterface() {
 
    nameButtons.forEach((button) => {
 
-       button.disabled = true;
+       button.disabled =
+           true;
 
-       button.style.pointerEvents = "none";
+       button.style.pointerEvents =
+           "none";
 
-       button.style.opacity = "0.45";
+       button.style.opacity =
+           "0.45";
    });
 
+
+   openConfirmationButton.disabled =
+       true;
+
+   openConfirmationButton.textContent =
+       "Votos já registrados";
+
+
    console.log(
-       `Votação bloqueada. Voto: ${votedName}`
+       "Votação bloqueada para este usuário."
    );
 }
 
@@ -670,12 +883,21 @@ function enableVotingInterface() {
 
    nameButtons.forEach((button) => {
 
-       button.disabled = false;
+       button.disabled =
+           false;
 
-       button.style.pointerEvents = "";
+       button.style.pointerEvents =
+           "";
 
-       button.style.opacity = "";
+       button.style.opacity =
+           "";
    });
+
+
+   openConfirmationButton.disabled =
+       true;
+
+   updateConfirmationButton();
 }
 
 
@@ -684,11 +906,16 @@ function enableVotingInterface() {
   ========================= */
 
 function showSuccessScreen(
-   name,
-   gender
+   maleName,
+   femaleName
 ) {
 
-   confirmedName.textContent = name;
+   confirmedMale.textContent =
+       maleName;
+
+   confirmedFemale.textContent =
+       femaleName;
+
 
    successOverlay.classList.remove(
        "hidden"
@@ -706,14 +933,14 @@ function showSuccessScreen(
    clearAnimationLayer();
 
 
-   if (gender === "male") {
+   /*
+    * Como agora existem dois votos,
+    * mostramos as duas animações.
+    */
 
-       createSoccerAnimation();
+   createSoccerAnimation();
 
-   } else {
-
-       createFemaleConfetti();
-   }
+   createFemaleConfetti();
 }
 
 
@@ -723,7 +950,8 @@ function showSuccessScreen(
 
 function clearAnimationLayer() {
 
-   animationLayer.innerHTML = "";
+   animationLayer.innerHTML =
+       "";
 }
 
 
@@ -733,7 +961,9 @@ function clearAnimationLayer() {
 
 function createSoccerAnimation() {
 
-   const numberOfBalls = 12;
+   const numberOfBalls =
+       8;
+
 
    for (
        let i = 0;
@@ -742,12 +972,15 @@ function createSoccerAnimation() {
    ) {
 
        const ball =
-           document.createElement("div");
+           document.createElement(
+               "div"
+           );
 
        ball.className =
            "soccer-ball";
 
-       ball.textContent = "⚽";
+       ball.textContent =
+           "⚽";
 
 
        const randomTop =
@@ -757,10 +990,12 @@ function createSoccerAnimation() {
            Math.random() * 1.5;
 
        const randomDuration =
-           2.2 + Math.random() * 2.5;
+           2.2 +
+           Math.random() * 2.5;
 
        const randomSize =
-           25 + Math.random() * 30;
+           20 +
+           Math.random() * 25;
 
 
        ball.style.top =
@@ -798,7 +1033,9 @@ function createFemaleConfetti() {
        "✦"
    ];
 
-   const numberOfPieces = 70;
+
+   const numberOfPieces =
+       50;
 
 
    for (
@@ -808,7 +1045,9 @@ function createFemaleConfetti() {
    ) {
 
        const confetti =
-           document.createElement("div");
+           document.createElement(
+               "div"
+           );
 
        confetti.className =
            "confetti";
@@ -830,13 +1069,16 @@ function createFemaleConfetti() {
            Math.random() * 2.5;
 
        const randomDuration =
-           2.5 + Math.random() * 3;
+           2.5 +
+           Math.random() * 3;
 
        const randomSize =
-           14 + Math.random() * 18;
+           14 +
+           Math.random() * 18;
 
        const randomDrift =
-           -150 + Math.random() * 300;
+           -150 +
+           Math.random() * 300;
 
 
        confetti.style.left =
@@ -872,14 +1114,6 @@ function showFirebaseError(message) {
 
    console.error(message);
 
-   /*
-    * Por enquanto usamos alert para não
-    * adicionar elementos novos ao HTML.
-    *
-    * Podemos substituir isso por um toast
-    * futurista depois.
-    */
-
    alert(message);
 }
 
@@ -893,7 +1127,7 @@ function handleVoteError(error) {
    if (!error) {
 
        showFirebaseError(
-           "Não foi possível registrar seu voto."
+           "Não foi possível registrar seus votos."
        );
 
        return;
@@ -909,12 +1143,6 @@ function handleVoteError(error) {
    switch (error.code) {
 
        case "permission-denied":
-
-           alreadyVoted = true;
-
-           disableVotingInterface(
-               selectedName || "este nome"
-           );
 
            showFirebaseError(
                "Seu voto não pôde ser registrado. Verifique se você já votou."
@@ -944,7 +1172,7 @@ function handleVoteError(error) {
        default:
 
            showFirebaseError(
-               "Não foi possível registrar seu voto. Tente novamente."
+               "Não foi possível registrar seus votos. Tente novamente."
            );
 
            break;
